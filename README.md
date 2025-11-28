@@ -25,56 +25,6 @@ You can explore my projects in the repository and view live pages through GitHub
 <label for="color">Favourite Color:</label>
 <input type="color" id="color" name="color"><br><br>
 
-<head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Mumbai Indians 2025 Squad</title>
-  <style>
-    body {
-      background-color: #0A2342;
-      color: #FFFFFF;
-      font-family: Arial, sans-serif;
-      margin: 0;
-      padding: 0;
-    }
-    header {
-      text-align: center;
-      background-color: #002D62;
-      padding: 20px;
-    }
-    header h1 {
-      margin: 0;
-      color: #FFD700;
-    }
-    .squad {
-      display: flex;
-      flex-wrap: wrap;
-      justify-content: center;
-      padding: 20px;
-    }
-    .player {
-      background-color: #004BA0;
-      border: 2px solid #FFD700;
-      border-radius: 8px;
-      margin: 10px;
-      padding: 10px;
-      width: 200px;
-      text-align: center;
-    }
-    .player img {
-      width: 100%;
-      height: auto;
-      border-radius: 5px;
-    }
-    .player-name {
-      margin: 10px 0 0 0;
-      font-size: 1.1em;
-      font-weight: bold;
-      color: #FFD700;
-    }
-  </style>
-</head>
-<body>
 
 <header>
   <h1>Mumbai Indians – 2025 Squad</h1>
