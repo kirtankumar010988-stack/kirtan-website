@@ -1,0 +1,141 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Mini Search Engine</title>
+  <style>
+    :root{ --bg:#0f1724; --card:#0b1220; --accent:#0ea5a4; --muted:#94a3b8; color-scheme: dark; }
+    html,body{height:100%;margin:0;font-family:Inter, system-ui, -apple-system, 'Segoe UI', Roboto, 'Helvetica Neue', Arial; background:linear-gradient(180deg,#071025 0%, #071824 100%); color:#e6eef6}
+    .wrap{min-height:100%;display:flex;align-items:center;justify-content:center;padding:48px}
+    .card{width:100%;max-width:900px;background:rgba(8,14,23,0.6);backdrop-filter:blur(6px);border-radius:14px;padding:28px;box-shadow:0 10px 30px rgba(2,6,23,0.6)}
+    h1{margin:0 0 6px;font-size:28px}
+    p.lead{margin:0 0 18px;color:var(--muted)}
+    .search-row{display:flex;gap:8px}
+    input[type=text]{flex:1;padding:14px 16px;border-radius:10px;border:1px solid rgba(255,255,255,0.05);background:transparent;color:inherit;font-size:16px}
+    select{padding:12px;border-radius:10px;background:transparent;color:inherit;border:1px solid rgba(255,255,255,0.05)}
+    button{padding:12px 18px;border-radius:10px;border:0;background:linear-gradient(90deg,var(--accent),#06b6d4);color:#022;cursor:pointer;font-weight:600}
+    .helpers{display:flex;gap:10px;margin-top:12px;align-items:center}
+    .suggestions{margin-top:8px;background:rgba(255,255,255,0.02);padding:8px;border-radius:8px;display:flex;gap:8px;flex-wrap:wrap}
+    .tag{padding:6px 10px;border-radius:999px;background:rgba(255,255,255,0.03);cursor:pointer;font-size:13px}
+    .results{margin-top:18px;padding:16px;border-radius:10px;background:rgba(255,255,255,0.02)}
+    .result{padding:12px 0;border-bottom:1px dashed rgba(255,255,255,0.03)}
+    .result:last-child{border-bottom:0}
+    .muted{color:var(--muted);font-size:13px}
+    .micro{font-size:12px;color:var(--muted)}
+    @media (max-width:640px){.search-row{flex-direction:column}.helpers{flex-direction:column;align-items:flex-start}}
+  </style>
+</head>
+<body>
+  <div class="wrap">
+    <div class="card">
+      <h1>My Mini Search</h1>
+      <p class="lead">Type your query and press Enter or click Search. This demo opens results on the chosen search engine or shows local demo results.</p>
+
+      <div class="search-row">
+        <input id="q" type="text" placeholder="Search the web or try: physics notes, loco pilot exam" autocomplete="off" />
+        <select id="engine" title="Choose search engine">
+          <option value="https://www.google.com/search?q=">Google</option>
+          <option value="https://www.bing.com/search?q=">Bing</option>
+          <option value="https://duckduckgo.com/?q=">DuckDuckGo</option>
+        </select>
+        <button id="searchBtn">Search</button>
+      </div>
+
+      <div class="helpers">
+        <div class="micro">Quick suggestions:</div>
+        <div class="suggestions" id="suggestions"></div>
+        <div style="margin-left:auto;display:flex;gap:8px;align-items:center">
+          <button id="voiceBtn" style="padding:8px 10px;border-radius:8px;background:rgba(255,255,255,0.03);color:inherit;border:1px solid rgba(255,255,255,0.03);font-weight:600">🎤 Voice</button>
+          <button id="localBtn" style="padding:8px 10px;border-radius:8px;background:rgba(255,255,255,0.03);color:inherit;border:1px solid rgba(255,255,255,0.03);font-weight:600">🔍 Local</button>
+        </div>
+      </div>
+
+      <div id="results" class="results" style="display:none"></div>
+
+      <!-- small explanation for learners -->
+      <!-- This file is a single-page demo. It performs two behaviors:
+           1) If you press Search it opens the selected search engine with the query.
+           2) If you click 'Local' it runs a client-side demo search over a small sample dataset and shows results below. -->
+
+    </div>
+  </div>
+
+  <script>
+    // sample suggestions and tiny dataset for local demo
+    const SUGGESTIONS = ['Air hostage', 'physics notes class 10', 'how to make rasgulla', 'kalakand recipe', 'MUMBAI INDIANS  latest SQUAD']
+    const SAMPLE_DOCS = [
+      {title:'Air hostage - Steps', url:'#doc1', snippet:'Eligibility, exams, training and tips to prepare for HACKER.'},
+      {title:'Class 10 Physics Notes - Mechanics', url:'#doc2', snippet:'Short and simple notes on mechanics, motion, laws of motion.'},
+      {title:'Kalakand recipe - Easy sweets', url:'#doc3', snippet:'A quick kalakand recipe for festivals and celebrations.'},
+      {title:'Railway Recruitment: Important dates', url:'#doc4', snippet:'Where to find notifications and how to apply for loco pilot exams.'}
+    ]
+
+    const qInput = document.getElementById('q')
+    const engSelect = document.getElementById('engine')
+    const searchBtn = document.getElementById('searchBtn')
+    const suggestionsWrap = document.getElementById('suggestions')
+    const resultsWrap = document.getElementById('results')
+    const voiceBtn = document.getElementById('voiceBtn')
+    const localBtn = document.getElementById('localBtn')
+
+    function renderSuggestions(filter=''){
+      suggestionsWrap.innerHTML = ''
+      const list = SUGGESTIONS.filter(s=>s.toLowerCase().includes(filter.toLowerCase()))
+      list.forEach(s=>{
+        const el = document.createElement('div')
+        el.className='tag'
+        el.textContent = s
+        el.onclick = ()=>{ qInput.value = s; qInput.focus(); }
+        suggestionsWrap.appendChild(el)
+      })
+    }
+
+    renderSuggestions()
+
+    function openSearch(){
+      const q = qInput.value.trim()
+      if(!q) return alert('Please type a search query.')
+      const base = engSelect.value
+      // open in a new tab
+      window.open(base + encodeURIComponent(q), '_blank')
+    }
+
+    searchBtn.addEventListener('click', openSearch)
+    qInput.addEventListener('keydown', (e)=>{ if(e.key === 'Enter') openSearch(); else setTimeout(()=>renderSuggestions(qInput.value),0) })
+
+    // Local demo search: performs a fuzzy-ish search over SAMPLE_DOCS
+    localBtn.addEventListener('click', ()=>{
+      const q = qInput.value.trim().toLowerCase()
+      if(!q){ alert('Enter a query to run the local demo search. Try: "loco pilot" or "physics"'); return }
+      const results = SAMPLE_DOCS.filter(d=> (d.title + ' ' + d.snippet).toLowerCase().includes(q))
+      resultsWrap.style.display = 'block'
+      if(results.length===0){ resultsWrap.innerHTML = `<div class="muted">No local results found for <strong>${escapeHtml(q)}</strong>. Try other keywords or click Search to use a real search engine.</div>`; return }
+      resultsWrap.innerHTML = results.map(r=>`<div class="result"><div style="font-weight:700">${escapeHtml(r.title)}</div><div class="muted">${escapeHtml(r.url)}</div><div style="margin-top:6px">${escapeHtml(r.snippet)}</div></div>`).join('')
+    })
+
+    // Simple voice search using Web Speech API (if available)
+    voiceBtn.addEventListener('click', ()=>{
+      const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition
+      if(!SpeechRecognition) return alert('Voice search not supported in this browser.')
+      const recog = new SpeechRecognition()
+      recog.lang = 'en-IN'
+      recog.interimResults = false
+      recog.maxAlternatives = 1
+      recog.onresult = (ev)=>{
+        const text = ev.results[0][0].transcript
+        qInput.value = text
+        renderSuggestions(text)
+      }
+      recog.onerror = (ev)=>{ alert('Voice error: '+ ev.error) }
+      recog.start()
+    })
+
+    // tiny helper
+    function escapeHtml(s){ return String(s).replace(/[&<>"']/g, function(c){ return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c] }) }
+
+    // preload a little placeholder text
+    qInput.value = ''
+  </script>
+</body>
+</html>
