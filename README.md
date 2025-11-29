@@ -66,6 +66,7 @@ You can explore my projects in the repository and view live pages through GitHub
 
 
 
-* Email:(kirtankumar010988@gmail.com)]
-  
+telephone no.: 6757-8898
+New Delhi, Sarad nagar sector 165 5th floor
+
 
