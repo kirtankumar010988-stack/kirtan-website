@@ -67,5 +67,5 @@ You can explore my projects in the repository and view live pages through GitHub
 
 
 * Email:(kirtankumar010988@gmail.com)]
-* GitHub: [https://github.com/kirtankumar010988-stack](https://github.com/kirtankumar010988-stack)
+  
 
